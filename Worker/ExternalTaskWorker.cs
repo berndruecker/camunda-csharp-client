@@ -44,8 +44,10 @@ namespace CamundaClient.Worker
                 Console.WriteLine(ex.Message);
             }
 
-            // schedule next run
-            taskQueryTimer.Change(TimeSpan.FromMilliseconds(50), TimeSpan.FromMilliseconds(Timeout.Infinite));
+            // schedule next run (if not stopped in between)
+            if (taskQueryTimer!=null) {
+                taskQueryTimer.Change(TimeSpan.FromMilliseconds(50), TimeSpan.FromMilliseconds(Timeout.Infinite));
+            }
         }
 
         private void Execute(ExternalTask externalTask)
@@ -84,6 +86,7 @@ namespace CamundaClient.Worker
         public void StopWork()
         {
             this.taskQueryTimer.Dispose();
+            this.taskQueryTimer = null;
         }
 
         public void Dispose()
