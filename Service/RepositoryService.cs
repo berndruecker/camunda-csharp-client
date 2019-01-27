@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Text;
+using CamundaClient.Logging;
 using CamundaClient.Requests;
 
 namespace CamundaClient.Service
@@ -15,6 +16,8 @@ namespace CamundaClient.Service
 
     public class RepositoryService
     {
+        private static readonly ILog logger = LogProvider.For<RepositoryService>();
+
         private CamundaClientHelper helper;
 
         public RepositoryService(CamundaClientHelper helper)
@@ -113,13 +116,12 @@ namespace CamundaClient.Service
                 // Read and add to Form for Deployment                
                 files.Add(FileParameter.FromManifestResource(thisExe, resource));
 
-                Console.WriteLine("Adding resource to deployment: " + resource);
+                logger.Info("Adding resource {Resource} to deployment", resource);
             }
 
             Deploy(thisExe.GetName().Name, files);
 
-            Console.WriteLine("Deployment to Camunda BPM succeeded.");
-
+            logger.Info("Deployment to Camunda BPM succeeded.");
         }
 
     }

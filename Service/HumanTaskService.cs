@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using CamundaClient.Logging;
 using CamundaClient.Requests;
 using Newtonsoft.Json.Serialization;
 
@@ -14,6 +15,8 @@ namespace CamundaClient.Service
 
     public class HumanTaskService
     {
+        private static readonly ILog logger = LogProvider.For<HumanTaskService>();
+
         private CamundaClientHelper helper;
 
         public HumanTaskService(CamundaClientHelper client)
@@ -37,7 +40,7 @@ namespace CamundaClient.Service
             }
             else
             {
-                //Console.WriteLine("{0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
+                logger.Debug("Received non-success status while loading tasks. Status: {StatusCode}; Reason: {ReasonPhrase}", response.StatusCode, response.ReasonPhrase);
                 throw new EngineException("Could not load tasks: " + response.ReasonPhrase);
             }
 

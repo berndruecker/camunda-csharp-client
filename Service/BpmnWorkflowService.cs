@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using CamundaClient.Logging;
 using CamundaClient.Requests;
 using System.Text;
 using Newtonsoft.Json.Serialization;
@@ -13,6 +14,8 @@ namespace CamundaClient.Service
 
     public class BpmnWorkflowService
     {
+        private static readonly ILog logger = LogProvider.For<BpmnWorkflowService>();
+
         private CamundaClientHelper helper;
 
         public BpmnWorkflowService(CamundaClientHelper client)
@@ -82,7 +85,7 @@ namespace CamundaClient.Service
             }
             else
             {
-                //Console.WriteLine("{0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
+                logger.Debug("Received non-success status while loading process instance. Status: {StatusCode}; Reason: {ReasonPhrase}", response.StatusCode, response.ReasonPhrase);
                 throw new EngineException("Could not load process instances: " + response.ReasonPhrase);
             }
 
