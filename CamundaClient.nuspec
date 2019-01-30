@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>BerndRuecker.Sample.CamundaClient</id>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
     <title>Camunda Sample Client</title>
     <authors>Bernd Ruecker</authors>
     <owners>Bernd Ruecker</owners>
