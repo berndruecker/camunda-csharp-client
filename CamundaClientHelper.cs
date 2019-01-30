@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
 
 namespace CamundaClient
 {
@@ -36,6 +37,7 @@ namespace CamundaClient
                 else
                 {
                     client = new HttpClient();
+                    client.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite); // Infinite / really?
                 }
                 // Add an Accept header for JSON format.
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(CONTENT_TYPE_JSON));

@@ -7,6 +7,7 @@ using System.Text;
 using CamundaClient.Requests;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Serialization;
+using System.Threading;
 
 namespace CamundaClient.Service
 {
