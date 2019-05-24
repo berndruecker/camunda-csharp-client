@@ -1,4 +1,5 @@
 ﻿using CamundaClient.Dto;
+using CamundaClient.Logging;
 using CamundaClient.Service;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,8 @@ namespace CamundaClient.Worker
 {
     public class ExternalTaskWorker : IDisposable
     {
+        private static readonly ILog logger = LogProvider.For<ExternalTaskWorker>();
+
         private string workerId = Guid.NewGuid().ToString(); // TODO: Make configurable
 
         private Timer taskQueryTimer;
@@ -40,8 +43,7 @@ namespace CamundaClient.Worker
             }
             catch (EngineException ex)
             {
-                // Most probably server is not running or request is invalid
-                Console.WriteLine(ex.Message);
+                logger.Debug(ex, "Error while polling for tasks. Most probably server is not running or request is invalid.");
             }
 
             // schedule next run (if not stopped in between)
@@ -54,21 +56,21 @@ namespace CamundaClient.Worker
         {
             Dictionary<string, object> resultVariables = new Dictionary<string, object>();
 
-            Console.WriteLine($"Execute External Task from topic '{taskWorkerInfo.TopicName}': {externalTask}...");
+            logger.Info("Execute External Task from topic '{TopicName}': {@ExternalTask}...", taskWorkerInfo.TopicName, externalTask);
             try
             {
                 taskWorkerInfo.TaskAdapter.Execute(externalTask, ref resultVariables);
-                Console.WriteLine($"...finished External Task {externalTask.Id}");
+                logger.Info("...finished External Task {@ExternalTask}", externalTask);
                 externalTaskService.Complete(workerId, externalTask.Id, resultVariables);
             }
             catch (UnrecoverableBusinessErrorException ex)
             {
-                Console.WriteLine($"...failed with business error code from External Task  {externalTask.Id}");
+                logger.Error(ex, "...failed with business error code from External Task {@ExternalTask}", externalTask);
                 externalTaskService.Error(workerId, externalTask.Id, ex.BusinessErrorCode);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"...failed External Task  {externalTask.Id}");
+                logger.Error(ex, "...failed External Task {@ExternalTask}", externalTask);
                 var retriesLeft = taskWorkerInfo.Retries; // start with default
                 if (externalTask.Retries.HasValue) // or decrement if retries are already set
                 {

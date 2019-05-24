@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using CamundaClient.Logging;
 using CamundaClient.Requests;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Serialization;
@@ -14,6 +15,8 @@ namespace CamundaClient.Service
 
     public class ExternalTaskService
     {
+        private static readonly ILog logger = LogProvider.For<ExternalTaskService>();
+
         private CamundaClientHelper helper;
 
         public ExternalTaskService(CamundaClientHelper client)
@@ -70,7 +73,7 @@ namespace CamundaClient.Service
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                logger.Error(ex, "Exception while fetching and locking tasks.");
                 // TODO: Handle Exception, add back off
                 throw;
             }
